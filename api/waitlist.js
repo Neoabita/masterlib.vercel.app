@@ -75,21 +75,6 @@ export default async function handler(req, res) {
         }
       }
 
-      // Slack — lead capturé
-      await notifySlack([
-        { type: 'header', text: { type: 'plain_text', text: '🆕 Nouveau lead Masterlib', emoji: true } },
-        { type: 'section', fields: [
-          { type: 'mrkdwn', text: `*Prénom :*\n${prenom}` },
-          { type: 'mrkdwn', text: `*Nom :*\n${nom}` },
-          { type: 'mrkdwn', text: `*Email :*\n<mailto:${email}|${email}>` },
-          { type: 'mrkdwn', text: `*Étape :*\n1/2 (email capturé)` },
-        ]},
-        { type: 'context', elements: [
-          { type: 'mrkdwn', text: '⏳ Lead en cours — séquence nurture déclenchée' }
-        ]},
-        { type: 'divider' }
-      ])
-
       return res.status(200).json({ success: true })
     }
 
