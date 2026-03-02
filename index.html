@@ -1892,19 +1892,17 @@
                             class="hidden aspect-video bg-black relative overflow-hidden"
                             style="border-radius: 12px;"
                         >
-                            <div style="position:absolute;inset:0;overflow:hidden;">
-                                <iframe
-                                    id="vimeoPlayer"
-                                    src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0&controls=0"
-                                    style="position:absolute;top:0;left:0;width:100%;height:calc(100% + 60px);border:0;pointer-events:none;"
-                                    allow="autoplay; fullscreen; picture-in-picture"
-                                    allowfullscreen
-                                ></iframe>
-                            </div>
+                            <iframe
+                                id="vimeoPlayer"
+                                src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowfullscreen
+                            ></iframe>
                             <!-- Overlay: Temps restant (top right) -->
                             <div
                                 id="videoTimeRemaining"
-                                style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:500;z-index:10;pointer-events:none;backdrop-filter:blur(4px);"
+                                style="position:absolute;top:12px;right:12px;background:#00d4b9;color:#fff;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:600;z-index:10;pointer-events:none;backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,212,185,0.3);"
                             >
                                 --:--
                             </div>
@@ -1912,9 +1910,9 @@
                             <button
                                 id="videoMuteBtn"
                                 onclick="event.stopPropagation(); toggleVideoMute()"
-                                style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;border:none;padding:8px;border-radius:8px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background 0.2s;"
-                                onmouseenter="this.style.background='rgba(0,0,0,0.85)'"
-                                onmouseleave="this.style.background='rgba(0,0,0,0.65)'"
+                                style="position:absolute;bottom:56px;right:12px;background:#00d4b9;color:#fff;border:none;padding:8px;border-radius:8px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all 0.2s;box-shadow:0 2px 8px rgba(0,212,185,0.3);"
+                                onmouseenter="this.style.background='#00e8cb';this.style.boxShadow='0 2px 12px rgba(0,212,185,0.5)'"
+                                onmouseleave="this.style.background='#00d4b9';this.style.boxShadow='0 2px 8px rgba(0,212,185,0.3)'"
                                 title="Activer le son"
                             >
                                 <svg id="muteIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1928,6 +1926,17 @@
                                     <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                                 </svg>
                             </button>
+                            <!-- Overlay: Playback Speed (bottom right, below mute) -->
+                            <button
+                                id="videoSpeedBtn"
+                                onclick="event.stopPropagation(); cyclePlaybackSpeed()"
+                                style="position:absolute;bottom:12px;right:12px;background:#00d4b9;color:#fff;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:all 0.2s;font-size:0.75rem;font-weight:700;min-width:38px;box-shadow:0 2px 8px rgba(0,212,185,0.3);"
+                                onmouseenter="this.style.background='#00e8cb';this.style.boxShadow='0 2px 12px rgba(0,212,185,0.5)'"
+                                onmouseleave="this.style.background='#00d4b9';this.style.boxShadow='0 2px 8px rgba(0,212,185,0.3)'"
+                                title="Vitesse de lecture"
+                            >
+                                1x
+                            </button>
                             <!-- Overlay: Replay (center, hidden until video ends) -->
                             <div
                                 id="videoReplayOverlay"
@@ -1935,9 +1944,9 @@
                             >
                                 <button
                                     onclick="event.stopPropagation(); replayVideo()"
-                                    style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(4px);"
-                                    onmouseenter="this.style.background='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.6)'"
-                                    onmouseleave="this.style.background='rgba(255,255,255,0.15)';this.style.borderColor='rgba(255,255,255,0.4)'"
+                                    style="background:#00d4b9;border:2px solid #00e8cb;color:#fff;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(4px);box-shadow:0 4px 16px rgba(0,212,185,0.4);"
+                                    onmouseenter="this.style.background='#00e8cb';this.style.boxShadow='0 4px 20px rgba(0,212,185,0.6)'"
+                                    onmouseleave="this.style.background='#00d4b9';this.style.boxShadow='0 4px 16px rgba(0,212,185,0.4)'"
                                 >
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="1 4 1 10 7 10"></polyline>
@@ -3294,6 +3303,19 @@
                 document.getElementById('muteIcon').style.display = videoIsMuted ? 'block' : 'none';
                 document.getElementById('unmuteIcon').style.display = videoIsMuted ? 'none' : 'block';
                 document.getElementById('videoMuteBtn').title = videoIsMuted ? 'Activer le son' : 'Couper le son';
+            }
+
+            // ── Playback speed ──
+            var speedOptions = [1, 1.2, 1.5, 2];
+            var currentSpeedIndex = 0;
+
+            function cyclePlaybackSpeed() {
+                if (!vimeoPlayer) return;
+                currentSpeedIndex = (currentSpeedIndex + 1) % speedOptions.length;
+                var speed = speedOptions[currentSpeedIndex];
+                vimeoPlayer.setPlaybackRate(speed);
+                var btn = document.getElementById('videoSpeedBtn');
+                if (btn) btn.textContent = speed + 'x';
             }
 
             function replayVideo() {
