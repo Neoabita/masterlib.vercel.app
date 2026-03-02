@@ -1894,7 +1894,7 @@
                         >
                             <iframe
                                 id="vimeoPlayer"
-                                src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0"
+                                data-src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0"
                                 style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
                                 allow="autoplay; fullscreen; picture-in-picture"
                                 allowfullscreen
@@ -3271,29 +3271,44 @@
 
             function initVimeoPlayer() {
                 var iframe = document.getElementById('vimeoPlayer');
-                if (iframe && window.Vimeo) {
-                    vimeoPlayer = new Vimeo.Player(iframe);
+                if (!iframe || !window.Vimeo) return;
 
-                    // Update time remaining
-                    vimeoPlayer.on('timeupdate', function(data) {
-                        var remaining = data.duration - data.seconds;
-                        var mins = Math.floor(remaining / 60);
-                        var secs = Math.floor(remaining % 60);
-                        document.getElementById('videoTimeRemaining').textContent =
-                            mins + ':' + (secs < 10 ? '0' : '') + secs;
-                    });
-
-                    // Show replay when video ends
-                    vimeoPlayer.on('ended', function() {
-                        var overlay = document.getElementById('videoReplayOverlay');
-                        overlay.style.display = 'flex';
-                    });
-
-                    // Hide replay overlay on play
-                    vimeoPlayer.on('play', function() {
-                        document.getElementById('videoReplayOverlay').style.display = 'none';
-                    });
+                // Load the iframe src dynamically (was stored in data-src to prevent premature loading)
+                var videoSrc = iframe.getAttribute('data-src');
+                if (videoSrc && !iframe.src) {
+                    iframe.src = videoSrc;
                 }
+
+                vimeoPlayer = new Vimeo.Player(iframe);
+
+                // Force play once the player is ready
+                vimeoPlayer.ready().then(function() {
+                    vimeoPlayer.setCurrentTime(0);
+                    vimeoPlayer.setMuted(true);
+                    vimeoPlayer.play().catch(function(e) {
+                        console.log('Autoplay blocked:', e);
+                    });
+                });
+
+                // Update time remaining
+                vimeoPlayer.on('timeupdate', function(data) {
+                    var remaining = data.duration - data.seconds;
+                    var mins = Math.floor(remaining / 60);
+                    var secs = Math.floor(remaining % 60);
+                    document.getElementById('videoTimeRemaining').textContent =
+                        mins + ':' + (secs < 10 ? '0' : '') + secs;
+                });
+
+                // Show replay when video ends
+                vimeoPlayer.on('ended', function() {
+                    var overlay = document.getElementById('videoReplayOverlay');
+                    overlay.style.display = 'flex';
+                });
+
+                // Hide replay overlay on play
+                vimeoPlayer.on('play', function() {
+                    document.getElementById('videoReplayOverlay').style.display = 'none';
+                });
             }
 
             function toggleVideoMute() {
