@@ -1712,6 +1712,7 @@
                     Masterlib
                 </a>
                 <a
+                    id="navbarCta"
                     href="#"
                     onclick="
                         event.preventDefault();
@@ -1719,14 +1720,32 @@
                     "
                     class="inline-flex items-center gap-2 bg-brand-accent text-brand-accent-text px-6 py-2.5 rounded-full no-underline font-semibold text-sm transition-all duration-300 hover:bg-brand-accent-light hover:-translate-y-px"
                 >
-                    Voir la démo
+                    <span id="navbarCtaText">Voir la démo</span>
                     <svg
+                        id="navbarCtaIconPlay"
                         width="16"
                         height="16"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                     >
                         <polygon points="6,3 20,12 6,21" />
+                    </svg>
+                    <svg
+                        id="navbarCtaIconCal"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="display:none;"
+                    >
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                 </a>
             </div>
@@ -1802,14 +1821,22 @@
                 <!-- VSL Section -->
                 <div class="animate-fade-in-up-4">
                     <div
+                        id="vslContainer"
                         class="bg-brand-dark-2 border border-white/[0.08] rounded-card-lg overflow-hidden relative max-w-[900px] mx-auto cursor-pointer group"
-                        onclick="openPopup()"
+                        onclick="handleVslClick()"
                     >
                         <!-- Gate (clickable thumbnail) -->
                         <div
                             id="vslGate"
                             class="vsl-gate-bg flex flex-col items-center justify-center text-center px-10 py-16 min-h-[420px] relative max-md:px-6 max-md:py-10 max-md:min-h-[360px]"
+                            style="position:relative;"
                         >
+                            <!-- Background thumbnail image -->
+                            <img
+                                src="/miniature-landing.png"
+                                alt="Aperçu Masterlib"
+                                style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35;pointer-events:none;"
+                            />
                             <div class="relative">
                                 <div
                                     class="animate-pulse-glow w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-[1.08]"
@@ -1865,13 +1892,15 @@
                             class="hidden aspect-video bg-black relative overflow-hidden"
                             style="border-radius: 12px;"
                         >
-                            <iframe
-                                id="vimeoPlayer"
-                                src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0"
-                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
-                                allow="autoplay; fullscreen; picture-in-picture"
-                                allowfullscreen
-                            ></iframe>
+                            <div style="position:absolute;inset:0;overflow:hidden;">
+                                <iframe
+                                    id="vimeoPlayer"
+                                    src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0&controls=0"
+                                    style="position:absolute;top:0;left:0;width:100%;height:calc(100% + 60px);border:0;pointer-events:none;"
+                                    allow="autoplay; fullscreen; picture-in-picture"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
                             <!-- Overlay: Temps restant (top right) -->
                             <div
                                 id="videoTimeRemaining"
@@ -1882,7 +1911,7 @@
                             <!-- Overlay: Mute/Unmute (bottom right) -->
                             <button
                                 id="videoMuteBtn"
-                                onclick="toggleVideoMute()"
+                                onclick="event.stopPropagation(); toggleVideoMute()"
                                 style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;border:none;padding:8px;border-radius:8px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background 0.2s;"
                                 onmouseenter="this.style.background='rgba(0,0,0,0.85)'"
                                 onmouseleave="this.style.background='rgba(0,0,0,0.65)'"
@@ -1905,7 +1934,7 @@
                                 style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:10;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);"
                             >
                                 <button
-                                    onclick="replayVideo()"
+                                    onclick="event.stopPropagation(); replayVideo()"
                                     style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(4px);"
                                     onmouseenter="this.style.background='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.6)'"
                                     onmouseleave="this.style.background='rgba(255,255,255,0.15)';this.style.borderColor='rgba(255,255,255,0.4)'"
@@ -2610,7 +2639,7 @@
                         transformer votre gestion de projet — en direct.
                     </p>
                     <a
-                        href="https://calendly.com/bienvenue-masterlib"
+                        href="https://app.iclosed.io/e/neoabita/obtenir-des-conseils-sur-masterlib"
                         target="_blank"
                         class="relative inline-flex items-center gap-2.5 bg-brand-accent text-brand-accent-text px-10 py-4 rounded-full no-underline font-bold text-[1.05rem] transition-all duration-300 shadow-[0_4px_30px_rgba(255,237,136,0.3)] hover:bg-brand-accent-light hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(255,237,136,0.4)]"
                     >
@@ -3205,6 +3234,10 @@
                     document.getElementById("successName").textContent =
                         "Merci " + formData.prenom + " ! 🎉";
                     goToStep(3); // success
+                    // Auto-close popup and show video after 3 seconds
+                    setTimeout(function() {
+                        unlockVideoAndClose();
+                    }, 3000);
                 } catch (err) {
                     document.getElementById("error2").textContent =
                         "Une erreur est survenue, veuillez réessayer.";
@@ -3212,6 +3245,15 @@
                 }
                 btn.disabled = false;
                 btn.innerHTML = "Voir la vidéo de présentation →";
+            }
+
+            // ── Handle VSL container click ──
+            function handleVslClick() {
+                var gate = document.getElementById('vslGate');
+                // Only open popup if the gate is still visible (video not yet unlocked)
+                if (gate && !gate.classList.contains('hidden')) {
+                    openPopup();
+                }
             }
 
             // ── Vimeo Player API ──
@@ -3282,13 +3324,30 @@
                     });
                     // Init Vimeo player after showing
                     setTimeout(initVimeoPlayer, 500);
+
+                    // Switch navbar button to "Réserver ma démo"
+                    var navCta = document.getElementById("navbarCta");
+                    var navText = document.getElementById("navbarCtaText");
+                    var navIconPlay = document.getElementById("navbarCtaIconPlay");
+                    var navIconCal = document.getElementById("navbarCtaIconCal");
+                    if (navCta && navText) {
+                        navText.textContent = "Réserver ma démo";
+                        navCta.href = "https://app.iclosed.io/e/neoabita/obtenir-des-conseils-sur-masterlib";
+                        navCta.target = "_blank";
+                        navCta.setAttribute("onclick", "");
+                        if (navIconPlay) navIconPlay.style.display = "none";
+                        if (navIconCal) navIconCal.style.display = "inline";
+                    }
                 }
             }
 
             // ── Auto-open popup after 12s ──
             setTimeout(function () {
+                var gate = document.getElementById('vslGate');
+                var videoAlreadyShowing = gate && gate.classList.contains('hidden');
                 if (
                     !popupAutoOpened &&
+                    !videoAlreadyShowing &&
                     !document
                         .getElementById("modalOverlay")
                         .classList.contains("active")
