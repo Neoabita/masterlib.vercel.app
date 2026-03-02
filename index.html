@@ -77,6 +77,9 @@
             rel="stylesheet"
         />
 
+        <!-- Vimeo Player SDK -->
+        <script src="https://player.vimeo.com/api/player.js"></script>
+
         <!-- Tailwind built CSS + custom styles -->
         <style>
             @keyframes fadeInUp {
@@ -1742,7 +1745,7 @@
                     <span
                         class="w-2 h-2 bg-brand-accent rounded-full animate-pulse-dot"
                     ></span>
-                    Utilisé par +200 professionnels du bâtiment
+                    Utilisé par +600 professionnels du bâtiment
                 </div>
 
                 <!-- Title -->
@@ -1859,51 +1862,96 @@
                         <!-- Video (hidden until form complete) -->
                         <div
                             id="vslVideo"
-                            class="hidden aspect-video bg-black relative"
+                            class="hidden aspect-video bg-black relative overflow-hidden"
+                            style="border-radius: 12px;"
                         >
+                            <iframe
+                                id="vimeoPlayer"
+                                src="https://player.vimeo.com/video/1169485110?autoplay=1&muted=1&background=0&loop=0&title=0&byline=0&portrait=0"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowfullscreen
+                            ></iframe>
+                            <!-- Overlay: Temps restant (top right) -->
                             <div
-                                class="w-full h-full flex items-center justify-center flex-col gap-4 text-brand-gray text-[0.95rem]"
+                                id="videoTimeRemaining"
+                                style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;padding:4px 10px;border-radius:6px;font-size:0.8rem;font-weight:500;z-index:10;pointer-events:none;backdrop-filter:blur(4px);"
                             >
-                                <div
-                                    class="w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center"
-                                    style="box-shadow: none"
+                                --:--
+                            </div>
+                            <!-- Overlay: Mute/Unmute (bottom right) -->
+                            <button
+                                id="videoMuteBtn"
+                                onclick="toggleVideoMute()"
+                                style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.65);color:#fff;border:none;padding:8px;border-radius:8px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:background 0.2s;"
+                                onmouseenter="this.style.background='rgba(0,0,0,0.85)'"
+                                onmouseleave="this.style.background='rgba(0,0,0,0.65)'"
+                                title="Activer le son"
+                            >
+                                <svg id="muteIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                                </svg>
+                                <svg id="unmuteIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                </svg>
+                            </button>
+                            <!-- Overlay: Replay (center, hidden until video ends) -->
+                            <div
+                                id="videoReplayOverlay"
+                                style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:10;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);"
+                            >
+                                <button
+                                    onclick="replayVideo()"
+                                    style="background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.4);color:#fff;padding:14px 28px;border-radius:12px;cursor:pointer;font-size:0.95rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all 0.2s;backdrop-filter:blur(4px);"
+                                    onmouseenter="this.style.background='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.6)'"
+                                    onmouseleave="this.style.background='rgba(255,255,255,0.15)';this.style.borderColor='rgba(255,255,255,0.4)'"
                                 >
-                                    <svg
-                                        class="w-8 h-8 fill-white ml-1"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <polygon points="6,3 20,12 6,21" />
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="1 4 1 10 7 10"></polyline>
+                                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                                     </svg>
-                                </div>
-                                Votre VSL s'affiche ici
-                                <span class="opacity-60 text-sm"
-                                    >Intégrez votre vidéo Wistia, Vimeo ou
-                                    YouTube ici</span
-                                >
+                                    Revoir la video
+                                </button>
                             </div>
                         </div>
-                        <!-- iClosed booking (hidden until form complete) -->
+                    </div>
+                </div>
+
+                <!-- iClosed booking — separate block below video card -->
+                <div
+                    id="iclosedEmbed"
+                    class="hidden"
+                    style="max-width:900px;margin:2.5rem auto 0;"
+                >
+                    <div style="text-align:center;margin-bottom:1.2rem;">
+                        <p style="font-size:0.85rem;color:#5a7a8a;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;">
+                            Prochaine etape
+                        </p>
+                        <h3 style="font-size:1.3rem;font-weight:700;color:#f4f0e8;margin:0;">
+                            Reservez votre appel decouverte
+                        </h3>
+                        <p style="font-size:0.95rem;color:#8ba3b0;margin-top:0.4rem;">
+                            30 min pour voir comment Masterlib s'adapte a vos chantiers.
+                        </p>
+                    </div>
+                    <div
+                        style="background:#0a2e42;border:1px solid rgba(255,255,255,0.08);border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.25);"
+                    >
                         <div
-                            id="iclosedEmbed"
-                            class="hidden"
-                            style="
-                                margin-top: 1.5rem;
-                                border-radius: 12px;
-                                overflow: hidden;
-                            "
-                        >
-                            <div
-                                class="iclosed-widget"
-                                data-url="https://app.iclosed.io/e/neoabita/obtenir-des-conseils-sur-masterlib"
-                                title="Obtenir des conseils sur Masterlib"
-                                style="width: 100%; height: 620px"
-                            ></div>
-                            <script
-                                type="text/javascript"
-                                src="https://app.iclosed.io/assets/widget.js"
-                                async
-                            ></script>
-                        </div>
+                            class="iclosed-widget"
+                            data-url="https://app.iclosed.io/e/neoabita/obtenir-des-conseils-sur-masterlib"
+                            title="Obtenir des conseils sur Masterlib"
+                            style="width: 100%; height: 620px"
+                        ></div>
+                        <script
+                            type="text/javascript"
+                            src="https://app.iclosed.io/assets/widget.js"
+                            async
+                        ></script>
                     </div>
                 </div>
             </div>
@@ -3166,6 +3214,54 @@
                 btn.innerHTML = "Voir la vidéo de présentation →";
             }
 
+            // ── Vimeo Player API ──
+            var vimeoPlayer = null;
+            var videoIsMuted = true;
+
+            function initVimeoPlayer() {
+                var iframe = document.getElementById('vimeoPlayer');
+                if (iframe && window.Vimeo) {
+                    vimeoPlayer = new Vimeo.Player(iframe);
+
+                    // Update time remaining
+                    vimeoPlayer.on('timeupdate', function(data) {
+                        var remaining = data.duration - data.seconds;
+                        var mins = Math.floor(remaining / 60);
+                        var secs = Math.floor(remaining % 60);
+                        document.getElementById('videoTimeRemaining').textContent =
+                            mins + ':' + (secs < 10 ? '0' : '') + secs;
+                    });
+
+                    // Show replay when video ends
+                    vimeoPlayer.on('ended', function() {
+                        var overlay = document.getElementById('videoReplayOverlay');
+                        overlay.style.display = 'flex';
+                    });
+
+                    // Hide replay overlay on play
+                    vimeoPlayer.on('play', function() {
+                        document.getElementById('videoReplayOverlay').style.display = 'none';
+                    });
+                }
+            }
+
+            function toggleVideoMute() {
+                if (!vimeoPlayer) return;
+                videoIsMuted = !videoIsMuted;
+                vimeoPlayer.setMuted(videoIsMuted);
+                document.getElementById('muteIcon').style.display = videoIsMuted ? 'block' : 'none';
+                document.getElementById('unmuteIcon').style.display = videoIsMuted ? 'none' : 'block';
+                document.getElementById('videoMuteBtn').title = videoIsMuted ? 'Activer le son' : 'Couper le son';
+            }
+
+            function replayVideo() {
+                if (!vimeoPlayer) return;
+                document.getElementById('videoReplayOverlay').style.display = 'none';
+                vimeoPlayer.setCurrentTime(0).then(function() {
+                    vimeoPlayer.play();
+                });
+            }
+
             // ── Unlock video & close popup ──
             function unlockVideoAndClose() {
                 closePopup();
@@ -3184,6 +3280,8 @@
                         behavior: "smooth",
                         block: "center",
                     });
+                    // Init Vimeo player after showing
+                    setTimeout(initVimeoPlayer, 500);
                 }
             }
 

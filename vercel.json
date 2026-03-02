@@ -1,4 +1,8 @@
 {
   "buildCommand": "",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/mentions-legales", "destination": "/mentions-legales.html" },
+    { "source": "/cgv-cgu", "destination": "/cgv-cgu.html" }
+  ]
 }
